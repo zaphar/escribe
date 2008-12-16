@@ -1,27 +1,46 @@
 %% @author Jeremy (Zaphar) Wall <jeremy@marzhillstudios.com>
 %% @doc gen_server callback module for application configuration stuff
--module(escribe_conf_srv).
+-module(escribe_conf).
 -author("Jeremy Wall <jeremy@marzhillstudios.com").
 -behaviour(gen_server).
 
 -import(escribe_util).
 -import(escribe_db).
 
--export([start_link/0, start/0, init/1]).
+-export([start_link/0, init/1]).
 -export([handle_call/3, handle_info/2, handle_cast/2]).
 -export([terminate/2]).
 -export([code_change/3]).
-
-start() ->
-    ok.
+-export([getkey/1, putkey/1]).
 
 start_link() ->
-    gen_server:start_link({local, escribe_conf}, escribe_conf_srv, [], []).
+    gen_server:start_link({local, escribe_conf}, escribe_conf, [], []).
 
 init(_Args) ->
-    %% first we need to load from the database
-    %% then we need to load from the file
-    {ok, []}.
+    case file:script("escribe.conf") of
+        {ok, Value} when is_list(Value) ->
+            {ok, lists:keymerge(2, Value, default())};
+        {ok, _BadValue} ->
+            {ok, default()};
+        {error, _Reason} ->
+            {ok, default()}
+    end.
+
+default() ->
+    [
+     {content_handlers,  [{rss, escribe_rss}]},
+     {protocol_handlers, [{http, escribe_http}]}
+    ].
+
+%% @doc get configuration key
+%% @spec getkey(Key::atom()) -> tuple()
+getkey(Key) ->
+    gen_server:call(escribe_conf, {getmy, Key}).
+
+%% @doc store configuration key
+%% @spec putkey(Tuple::tuple()) -> ok
+putkey(Tuple) ->
+    gen_server:call(escribe_conf, {putmy, Tuple}).
 
 %% @doc handle the config server requests
 %% @spec handle_call(Call, Src, State) -> {reply, tuple(), State}
