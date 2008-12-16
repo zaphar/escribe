@@ -13,11 +13,11 @@ init(_Args) ->
           [
            %% child specifications
            %% start our event logger
-           {escribe_conf, {escribe_conf, start_link, []},
-            permanent, brutal_kill, worker, [escribe_conf]},
-           %% start our event logger
            {escribe_evt, {escribe_evt, start_link, []},
             permanent, brutal_kill, worker, [escribe_evt]},
+           %% start our config server
+           {escribe_conf, {escribe_conf, start_link, []},
+            permanent, brutal_kill, worker, [escribe_conf]},
            %% start the escribe gen_server process
            {escribe_server, {escribe_server, start_link, []},
             permanent, brutal_kill, worker, [escribe_server]}

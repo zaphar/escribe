@@ -63,13 +63,13 @@ handle_call({putmy, Tuple}, _Src, State) when is_tuple(Tuple) ->
 handle_cast({putmy, Tuple}, State) when is_tuple(Tuple) ->
     {noreply, update_state(Tuple, State)}.
 
-%% @doc unused
-handle_info(_Call, _State) ->
-    ok.
-
 %% @private
 update_state(Tuple, State) ->
     lists:keystore(element(1, Tuple), 1, State, Tuple).
+
+%% @doc unused
+handle_info(_Call, _State) ->
+    ok.
 
 %% @TODO
 terminate(_Arg1, _Arg2) ->
