@@ -6,9 +6,32 @@
 
 -import(lists).
 -import(string).
+-import(erl_scan).
+-import(erl_parse).
+-import(escribe_evt).
+
+-export([parse_config/1]).
 -export([interpret_type/1, interpret_doctype/1]).
 -export([flatten_string_list/1]).
 -export([guid/0, char_list/0, rand_char/1]).
+
+%% @doc parses a configuration for a module
+%% @spec parse_config(S::string()) -> Result
+%% Result = {error, Line, Reason} | {error, Reason} | term()
+parse_config(S) when is_list(S) ->
+    case erl_scan:string(S) of
+        {ok, Tokens, _End} ->
+            case erl_parse:parse_term(Tokens) of
+                {ok, Term} ->
+                    Term;
+                {error, {_Line, _Module, Reason}} ->
+                    escribe_evt:error(erl_parse:format_error(Reason)),
+                    {error, Reason}
+            end;
+        {error, {_Line, _Module, Reason}, Line} when is_list(Reason) ->
+            escribe_evt:error(erl_scan:format_error(Reason)),
+            {error, Line, Reason}
+    end.
 
 %% @doc interpret the type of the feed
 %%

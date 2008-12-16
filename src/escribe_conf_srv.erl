@@ -16,23 +16,47 @@ start() ->
     ok.
 
 start_link() ->
-    ok.
+    gen_server:start_link({local, escribe_conf}, escribe_conf_srv, [], []).
 
 init(_Args) ->
-    {ok, {}}.
+    %% first we need to load from the database
+    %% then we need to load from the file
+    {ok, []}.
 
-handle_call(_Src, _Call, _State) ->
-    ok.
+%% @doc handle the config server requests
+%% @spec handle_call(Call, Src, State) -> {reply, tuple(), State}
+%%  Call = {getmy, atom()} | {putmy, tuple()}
+%%  State = [tuple()]
+handle_call({getmy, Key}, _Src, State) when is_atom(Key) ->
+    case lists:keysearch(Key, 1, State) of
+        {value, Tuple} ->
+            {reply, Tuple, State};
+        false ->
+            {reply, {}, State}
+    end;
+handle_call({putmy, Tuple}, _Src, State) when is_tuple(Tuple) ->
+    {reply, ok, update_state(Tuple, State)}.
 
+%% @doc handle the request to set a config item
+%% @spec handle_cast(Call, State) -> {noreply, State}
+%%  Call = {putmy, tuple()}
+%%  State = [tuple()]
+handle_cast({putmy, Tuple}, State) when is_tuple(Tuple) ->
+    {noreply, update_state(Tuple, State)}.
+
+%% @doc unused
 handle_info(_Call, _State) ->
     ok.
 
-handle_cast(_Cast, _State) ->
-    ok.
+%% @private
+update_state(Tuple, State) ->
+    lists:keystore(element(1, Tuple), 1, State, Tuple).
 
+%% @TODO
 terminate(_Arg1, _Arg2) ->
     ok.
 
+%% @TODO
 code_change(_Arg1, _Arg2, _Arg3) ->
     ok.
 
