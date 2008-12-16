@@ -20,6 +20,13 @@
 
 -export([crawl/1, crawl/0, crawl_proc/1]).
 -export([get_http/1]).
+-export([get_docs/1, process_doc/1, get_handler/2]).
+
+%% @type exception() = {'EXIT', {undef, Stack}}
+%% Stack = [{M,F,A}]
+%% M = atom()
+%% F = atom()
+%% A = list()
 
 %% @doc crawl feed sources from database
 %% @spec crawl() -> any()
@@ -52,6 +59,41 @@ crawl_proc(L) when is_record(L, sources) ->
       escribe_evt:error(string:concat("unhandled type: ", atom_to_list(Type))),
       ok
   end.
+
+%% @doc get the docs from a feed automatically
+%% using the correct protocol handler
+%% @spec get_docs(D::source()) -> string()
+%% @throws exception()
+get_docs(D) when is_record(D, sources) ->
+    Handler = get_handler(D#sources.type, protocol_handlers),
+    apply(Handler, get_feed, []).
+
+%% @doc process each doc in the feed
+%% using the content_type handler for that feed
+%% @spec process_doc(F::string()) -> [document()]
+%% @throws exception()
+process_doc(F) when is_list(F) ->
+    Type = escribe_util:interpret_doctype(F),
+    Handler = get_handler(Type, content_handlers),
+    apply(Handler, process_feed, []).
+
+%% @doc get the handler module for a given handler type
+%% @spec get_handler(Type::atom(), HandlerType::atom()) -> atom()
+get_handler(Type, HandlerType) 
+    when is_atom(Type) andalso is_atom(HandlerType) ->
+    %% return our handler based off the escribe configuration
+    {HandlerType, HandlerList} = escribe_conf:getkey(HandlerType),
+    case HandlerList of
+        undef ->
+            default;
+        List when is_list(List) ->
+            case lists:keysearch(Type, 1, HandlerList) of
+                {value, {Type, Module}} ->
+                    Module;
+                false ->
+                    default
+            end
+    end.
 
 %% @TODO
 slurp(Str, Uri) when is_list(Str) andalso is_list(Uri) ->

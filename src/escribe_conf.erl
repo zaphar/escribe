@@ -51,7 +51,7 @@ handle_call({getmy, Key}, _Src, State) when is_atom(Key) ->
         {value, Tuple} ->
             {reply, Tuple, State};
         false ->
-            {reply, {}, State}
+            {reply, {Key, undef}, State}
     end;
 handle_call({putmy, Tuple}, _Src, State) when is_tuple(Tuple) ->
     {reply, ok, update_state(Tuple, State)}.
