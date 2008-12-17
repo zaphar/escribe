@@ -1,3 +1,6 @@
+%% @doc gen_event log handler
+%% default log file is: escribe.log but you can override in the conf file
+%% @author Jeremy Wall <jeremy@marzhillstudios.com>
 -module(escribe_evt).
 -behaviour(gen_event).
 -author("Jeremy Wall <jeremy@marzhillstudios.com>").
