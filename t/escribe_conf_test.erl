@@ -8,7 +8,7 @@
 -export([start/0]).
 
 start() ->
-    plan(1),
+    plan(12),
     loaded_ok(escribe_conf, "loaded our escribe_conf module ok"),
     can_ok(escribe_conf, handle_call, 3),
     can_ok(escribe_conf, handle_cast, 2),
