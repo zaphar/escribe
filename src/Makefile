@@ -10,7 +10,7 @@ doc:
 
 clean:
 	rm -f $(CLEAN_TARGETS)
-	rm -rf 
+	rm -rf $(DOC_DIR)
 
 test:
 	@echo "No tests for src directory"
