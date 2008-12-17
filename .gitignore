@@ -1,0 +1,6 @@
+# ignore beam object files
+*.beam
+#ignore the generated documentation files
+docs/*
+#ignore vim .swp files
+.*.swp
