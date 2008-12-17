@@ -45,7 +45,7 @@ EBIN_FILES = $(ERL_OBJECTS) $(APP_FILES:%.app=../ebin/%.app)
 MODULES = $(ERL_SOURCES:%.erl=%)
 
 #common set of targets for cleaning
-CLEAN_TARGETS := $(EBIN_FILES) $(ERL_OBJECTS_LOCAL) edoc-info erl_crash.dump
+CLEAN_TARGETS := $(EBIN_FILES) $(ERL_OBJECTS_LOCAL) edoc-info erl_crash.dump escribe.log
 
 ERL_RUN := $(ERL) -pa $(EBIN_DIR) -run 
 ERL_STOP := -run init stop -noshell

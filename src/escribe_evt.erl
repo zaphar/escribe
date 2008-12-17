@@ -86,28 +86,35 @@ handle_event({fatal, Msg}, State) ->
     log_it(Entry, State).
 
 log_it(Entry, State) ->
-    io:format("~p~n", [Entry]),
+    {log_file, Fn} = escribe_conf:getkey(log_file),
+    case file:open(Fn, [append]) of
+        {ok, IoDevice} ->
+            io:format(IoDevice, "~p~n", [Entry]);
+        {error, Reason} ->
+            io:format("~p~n", [Reason]),
+            io:format("~p~n", [Entry])
+    end,
     {ok, lists:append(State, [Entry])}.
 
 %% @TODO(jwall): document these methods
 flush() ->
+    gen_event:notify(escribe_logger, {debug, "flushing log file"}),
     gen_event:call(escribe_logger, escribe_evt, flush).
 view() ->
+    gen_event:notify(escribe_logger, {debug, "viewing entire log"}),
     gen_event:call(escribe_logger, escribe_evt, view).
 view(N) ->
+    gen_event:notify(escribe_logger, {debug, "viewing part of log"}),
     gen_event:call(escribe_logger, escribe_evt, {view, N}).
 
 %% ask the logger to flush the log
 handle_call(flush, _State) ->
-    gen_event:notify(escribe_logger, {debug, "flushing log file"}),
     {ok, flushed, []};
 %% ask to view the log
 handle_call(view, State) ->
-    gen_event:notify(escribe_logger, {debug, "viewing entire log"}),
     {ok, State, State};
 %% ask to view the log
 handle_call({view, N}, State) ->
-    gen_event:notify(escribe_logger, {debug, "viewing part of log"}),
     case length(State) > N of
         true ->
             {LogView, _Rest}  = lists:split(N, lists:reverse(State)),
@@ -129,3 +136,4 @@ code_change(_OldVsn, State, _Extra) ->
 
 terminate(_Arg, _State) ->
     ok.
+

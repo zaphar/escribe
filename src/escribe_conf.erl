@@ -29,7 +29,8 @@ init(_Args) ->
 default() ->
     [
      {content_handlers,  [{rss, escribe_rss}]},
-     {protocol_handlers, [{http, escribe_http}]}
+     {protocol_handlers, [{http, escribe_http}]},
+     {log_file, "escribe.log"}
     ].
 
 %% @doc get configuration key
