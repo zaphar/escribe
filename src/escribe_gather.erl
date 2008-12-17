@@ -20,7 +20,7 @@
 
 -export([crawl/1, crawl/0, crawl_proc/1]).
 -export([get_http/1]).
--export([get_docs/1, process_doc/1, get_handler/2]).
+-export([get_docs/1, process_doc/2, get_handler/2]).
 
 %% @type exception() = {'EXIT', {undef, Stack}}
 %% Stack = [{M,F,A}]
@@ -72,10 +72,10 @@ get_docs(D) when is_record(D, sources) ->
 %% using the content_type handler for that feed
 %% @spec process_doc(F::string()) -> [document()]
 %% @throws exception()
-process_doc(F) when is_list(F) ->
+process_doc(F, Uri) when is_list(F) ->
     Type = escribe_util:interpret_doctype(F),
     Handler = get_handler(Type, content_handlers),
-    apply(Handler, process_feed, []).
+    apply(Handler, process_feed, [F, Uri]).
 
 %% @doc get the handler module for a given handler type
 %% @spec get_handler(Type::atom(), HandlerType::atom()) -> atom()

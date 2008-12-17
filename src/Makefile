@@ -1,6 +1,6 @@
 include ../include/globals.mk
 
-all: $(ERL_OBJECTS)
+all: $(ERL_BEHAVIOUR_OBJECTS) $(ERL_OBJECTS)
 
 doc: 
 	@echo "generating docs for escribe"

@@ -9,11 +9,12 @@
 -export([start/0]).
 
 start() ->
-    plan(6),
+    plan(7),
     loaded_ok(escribe, "escribe application module is there"),
     loaded_ok(escribe_server, "escribe application module is there"),
     loaded_ok(escribe_sup, "escribe application module is there"),
     is_behaviour(escribe, application),
     is_behaviour(escribe_sup, supervisor),
     is_behaviour(escribe_server, gen_server),
+    is_behaviour(escribe_evt, gen_event),
     etap:end_tests().
