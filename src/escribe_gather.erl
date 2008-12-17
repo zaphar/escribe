@@ -70,7 +70,7 @@ get_docs(D) when is_record(D, sources) ->
 
 %% @doc process each doc in the feed
 %% using the content_type handler for that feed
-%% @spec process_doc(F::string()) -> [document()]
+%% @spec process_doc(F::string(), Uri::string()) -> [document()]
 %% @throws exception()
 process_doc(F, Uri) when is_list(F) ->
     Type = escribe_util:interpret_doctype(F),
