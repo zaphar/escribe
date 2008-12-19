@@ -4,3 +4,11 @@
 docs/*
 #ignore vim .swp files
 .*.swp
+#ignore mnesia database directories
+Mnesia.*@*
+#miscellaneous files
+erl_crash.dump
+edoc-info
+erl_crash.dump
+escribe.boot
+escribe.script
