@@ -1,4 +1,27 @@
 
 @author Jeremy Wall <jeremy@marzhillstudios.com>
 @version 0.1.0
-@doc escribe is an erlang application to track and record your online content
+@doc escribe is an erlang application to track and record your online content.
+
+== Overview ==
+
+escribe is an erlang application that tracks and records online content for you. It will provide a web interface for you to direct it to feeds and will consume those feeds periodically storing the content for you to locally.
+
+=== BUILD and INSTALL ===
+
+To build this application from the root run make `&&' make boot. To start the application type:
+
+<code>
+    erl -pa ebin -pa support -boot escribe
+</code>
+
+This should drop you into an erlang shell prompt.
+
+=== TODO ===
+
+<ol>
+    <li>Handlers for various protocols</li>
+    <li>Handlers for various feed types</li>
+    <li>Web Interface to manage the content</li>
+</ol>
+
